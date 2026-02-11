@@ -3,12 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Amazon Gift Card</title>
-    <link rel="stylesheet" href="styles.css">
-    <script src="script.js"></script>
+    <title>Mouse Avoiding Movement</title>
+    <style>
+        body {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .box {
+            width: 100px;
+            height: 100px;
+            background-color: red;
+            position: absolute;
+        }
+    </style>
 </head>
 <body>
-    <h1>Welcome to Amazon Gift Card</h1>
-    <div id="card">Your Gift Card is here!</div>
+    <div class="box" id="box"></div>
+    <script>
+        const box = document.getElementById('box');
+        document.addEventListener('mousemove', (event) => {
+            const { clientX, clientY } = event;
+            const boxRect = box.getBoundingClientRect();
+            const boxX = boxRect.x + boxRect.width / 2;
+            const boxY = boxRect.y + boxRect.height / 2;
+            const distanceX = clientX - boxX;
+            const distanceY = clientY - boxY;
+            const distance = Math.sqrt(distanceX * distanceX + distanceY * distanceY);
+            const minDistance = 150;
+            if (distance < minDistance) {
+                const angle = Math.atan2(distanceY, distanceX);
+                const moveX = Math.cos(angle) * (minDistance - distance);
+                const moveY = Math.sin(angle) * (minDistance - distance);
+                box.style.transform = `translate(${moveX}px, ${moveY}px)`;
+            } else {
+                box.style.transform = 'translate(0, 0)';
+            }
+        });
+    </script>
 </body>
 </html>
