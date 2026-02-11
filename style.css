@@ -1,20 +1,11 @@
-/* CSS */
 body {
-  margin: 0;
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  overflow: hidden;
-  background-color: #f0f0f0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
 }
 
 #avoid-cursor {
-  width: 100px;
-  height: 100px;
-  background-image: url('https://gamecardsdirect.com/content/picture/11016/amazon-20-pond.webp');
-  background-size: cover;
-  border-radius: 10px;
-  position: absolute;
-  transition: transform 0.2s ease;
+    pointer-events: none;
 }
