@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mouse Avoiding Image</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #f0f0f0;
+      overflow: hidden; /* Prevent scrolling when the object moves */
+      flex-direction: column; /* Stack the text and image vertically */
+    }
+
+    #message {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 170px; /* Move the text 50px up from its default position */
+    }
+
+    #avoid-cursor {
+      width: 200px; /* Image width (50% of original size) */
+      height: 125px; /* Image height (50% of original size) */
+      position: absolute;
+      transition: transform 0.1s ease; /* Smooth transition */
+      background: none; /* Remove the background */
+      border: none; /* Remove the border */
+    }
+
+    /* Ensure image fits within the container */
+    #avoid-cursor img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain; /* Keeps the full image within the container */
+      border-radius: 0;  /* No border-radius for the image */
+    }
+  </style>
+</head>
+<body>
+  <!-- Text line above the image -->
+  <div id="message">Click to claim your gift card!</div>
+
+  <!-- Image element for the button -->
+  <div id="avoid-cursor">
+    <img src="https://gamecardsdirect.com/content/picture/11016/amazon-20-pond.webp" alt="Catch Me!">
+  </div>
+
+  <script>
+    const element = document.getElementById("avoid-cursor");
+
+    const imageWidth = 200; // Image width (50% of original size)
+    const imageHeight = 125; // Image height (50% of original size)
+    const buffer = 150; // Buffer distance for cursor to trigger movement
+    const edgeMargin = 20; // Small margin from the edges to avoid image sticking
+    const resetThreshold = 50; // Threshold distance from corners to reset to center
+
+    let currentX = window.innerWidth / 2 - imageWidth / 2; // Initial center position (horizontal)
+    let currentY = window.innerHeight / 2 - imageHeight / 2; // Initial center position (vertical)
+
+    // Function to reset position smoothly to the center
+    function resetToCenter() {
+      currentX = window.innerWidth / 2 - imageWidth / 2;
+      currentY = window.innerHeight / 2 - imageHeight / 2;
+    }
+
+    // Function to update the image position
+    function updatePosition() {
+      element.style.left = `${currentX}px`;
+      element.style.top = `${currentY}px`;
+    }
+
+    // Event listener for mouse movement
+    document.addEventListener("mousemove", (event) => {
+      const mouseX = event.clientX;
+      const mouseY = event.clientY;
+
+      // Calculate the distance between the cursor and the element center
+      const distanceX = mouseX - (currentX + imageWidth / 2);
+      const distanceY = mouseY - (currentY + imageHeight / 2);
+
+      // If the cursor is within the buffer distance from the element, move it away
+      if (Math.abs(distanceX) < buffer && Math.abs(distanceY) < buffer) {
+        // Move the element away from the cursor
+        if (mouseX > currentX + imageWidth / 2) {
+          currentX -= 50; // Move the image to the left
+        } else {
+          currentX += 50; // Move the image to the right
+        }
+
+        if (mouseY > currentY + imageHeight / 2) {
+          currentY -= 50; // Move the image up
+        } else {
+          currentY += 50; // Move the image down
+        }
+      }
+
+      // Ensure the image stays within the screen bounds with small margins
+      const windowWidth = window.innerWidth;
+      const windowHeight = window.innerHeight;
+
+      // Apply small margin around the screen to avoid sticking to edges
+      currentX = Math.min(Math.max(currentX, edgeMargin), windowWidth - imageWidth - edgeMargin);
+      currentY = Math.min(Math.max(currentY, edgeMargin), windowHeight - imageHeight - edgeMargin);
+
+      // Check if the image is in one of the corners, and reset its position if so
+      if (
+        (currentX <= resetThreshold && currentY <= resetThreshold) || // Top-left corner
+        (currentX >= windowWidth - imageWidth - resetThreshold && currentY <= resetThreshold) || // Top-right corner
+        (currentX <= resetThreshold && currentY >= windowHeight - imageHeight - resetThreshold) || // Bottom-left corner
+        (currentX >= windowWidth - imageWidth - resetThreshold && currentY >= windowHeight - imageHeight - resetThreshold) // Bottom-right corner
+      ) {
+        resetToCenter(); // Reset position to the center if stuck in the corner
+      }
+
+      updatePosition();
+    });
+
+    // Initialize the image at the center of the screen
+    updatePosition();
+  </script>
+</body>
+</html>
